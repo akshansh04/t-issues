@@ -33,7 +33,10 @@ class TIssuesApp < Sinatra::Application
     similar_issues = get_similar_issues(issues_result[:issues])
     if similar_issues == ''
       similar_issues = 'No similar issues were found!'
+    else
+      similar_issues = "The following issues look similar to me :information_desk_person:\n#{similar_issues}"
     end
+    
     puts similar_issues
     puts @payload['issue']['number']
     GitHubClient.add_issue_comment(owner, repo, @payload['issue']['number'], similar_issues)

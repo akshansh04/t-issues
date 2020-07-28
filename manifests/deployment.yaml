@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: t-issues
-        image: shivamg202/t-issues:v1
+        image: ajacr5.azurecr.io/t-issues:v2
         ports:
         - name: http
           containerPort: 80
@@ -24,3 +24,5 @@ spec:
         envFrom:
           - secretRef:
               name: t-issues-secrets
+      imagePullSecrets:
+      - name: t-issues-regcreds

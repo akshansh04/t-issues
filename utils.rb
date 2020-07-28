@@ -1,4 +1,5 @@
 require 'net/http'
+require_relative './config.rb'
 
 module Utilities
   SIMILARITY_THRESHOLD = 0.60
@@ -16,7 +17,7 @@ module Utilities
     similarity_scores.each { |issue|  
       if issue['score'].to_f >= SIMILARITY_THRESHOLD and similar_issues_count < MAX_SIMILAR_ISSUES        
         if issue['id'].to_i != @payload['issue']['number']   
-          similar_issues = "#{similar_issues}##{issue['id']} #{issue_map[issue['id']]}\n"
+          similar_issues = "#{similar_issues}- ##{issue['id']} #{issue_map[issue['id']]}\n"
           similar_issues_count += 1
         end
       else
@@ -44,7 +45,7 @@ module Utilities
   end
 
   def send_request(source, target)
-    uri = URI('http://52.191.226.172:5000/')
+    uri = URI("http://#{Config::MATCHMAKING_CLUSTER_IP}/")
     req = Net::HTTP::Post.new(uri)
     req['Content-Type'] = 'application/json; charset=utf-8'
     req.body = { source: source, target: target }.to_json
