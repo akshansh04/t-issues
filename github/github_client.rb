@@ -1,9 +1,11 @@
+require 'octokit'
 require_relative './github_graphql'
 require_relative './github_graphql_client'
 
 module GitHubClient
   def self.init(installation_token)
     @context = { installation_token: installation_token }
+    @installation_client = Octokit::Client.new(bearer_token: installation_token)
   end
 
   def self.listIssues(owner, repo, max_pages=10)
@@ -40,5 +42,9 @@ module GitHubClient
       error: nil,
       issues: all_issues.map {|issue| { :url=> issue.node.url, :title=> issue.node.title, :number=> issue.node.number }}
     }
+  end
+
+  def self.add_issue_comment(owner, repo, number, comment)
+    @installation_client.add_comment("#{owner}/#{repo}", number, comment)
   end
 end
