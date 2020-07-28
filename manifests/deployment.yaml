@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: t-issues
+  labels:
+    app: t-issues
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: t-issues
+  template:
+    metadata:
+      labels:
+        app: t-issues
+    spec:
+      containers:
+      - name: t-issues
+        image: shivamg202/t-issues:v1
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        envFrom:
+          - secretRef:
+              name: t-issues-secrets

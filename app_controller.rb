@@ -1,9 +1,11 @@
 require 'sinatra'
 require_relative './auth.rb'
 require_relative './github/github_client.rb'
+require_relative './utils.rb'
 
 class TIssuesApp < Sinatra::Application
   include Auth
+  include Utilities
   
   Config.validate
 
@@ -28,12 +30,18 @@ class TIssuesApp < Sinatra::Application
       halt 500, { 'Content-Type' => 'application/json' }, { error: issues_result[:error] }.to_json
     end
 
-    # get sim scores
-    # add comment for sim > threshold
+    similar_issues = get_similar_issues(issues_result[:issues])
+    if similar_issues == ''
+      similar_issues = 'No similar issues were found!'
+    end
+    puts similar_issues
+    puts @payload['issue']['number']
+    GitHubClient.add_issue_comment(owner, repo, @payload['issue']['number'], similar_issues)
+
     content_type :json
     status 200
     # message = '/get-similar-issues called'
-    message = issues_result[:issues]
+    message = 'Similar issues posted'
     { issues: message }.to_json
   end
 
@@ -56,6 +64,10 @@ class TIssuesApp < Sinatra::Application
     def validate_event_type
       event_name = get_header('HTTP_X_GITHUB_EVENT')
       if event_name != 'issues'
+        puts("Ignoring event: #{event_name}")
+        halt 200
+      end
+      if @payload['action'] != 'opened' and  @payload['action'] != 'edited'
         puts("Ignoring event: #{event_name}")
         halt 200
       end
