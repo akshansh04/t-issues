@@ -1,14 +1,28 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    activesupport (6.0.3.2)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 0.7, < 2)
+      minitest (~> 5.1)
+      tzinfo (~> 1.1)
+      zeitwerk (~> 2.2, >= 2.2.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
+    concurrent-ruby (1.1.6)
     dotenv (2.5.0)
     faraday (1.0.0)
       multipart-post (>= 1.2, < 3)
     git (1.7.0)
       rchardet (~> 1.8)
+    graphql (1.11.1)
+    graphql-client (0.16.0)
+      activesupport (>= 3.0)
+      graphql (~> 1.8)
+    i18n (1.8.5)
+      concurrent-ruby (~> 1.0)
     jwt (2.2.1)
+    minitest (5.14.1)
     multipart-post (2.1.1)
     mustermann (1.0.3)
     octokit (4.16.0)
@@ -27,14 +41,20 @@ GEM
       rack (~> 2.0)
       rack-protection (= 2.0.8.1)
       tilt (~> 2.0)
+    thread_safe (0.3.6)
     tilt (2.0.8)
+    tzinfo (1.2.7)
+      thread_safe (~> 0.1)
+    zeitwerk (2.4.0)
 
 PLATFORMS
+  ruby
   x64-mingw32
 
 DEPENDENCIES
   dotenv
   git
+  graphql-client
   jwt (~> 2.1)
   octokit (~> 4.16.0)
   sinatra (~> 2.0)

@@ -1,5 +1,6 @@
 require 'sinatra'
 require_relative './auth.rb'
+require_relative './github/github_client.rb'
 
 class TIssuesApp < Sinatra::Application
   include Auth
@@ -12,15 +13,28 @@ class TIssuesApp < Sinatra::Application
     validate_event_type
     authenticate_app
     authenticate_installation
+    GitHubClient.init @installation_token
   end
 
   post '/get-similar-issues' do
     puts('/get-similar-issues called')
 
+    owner = @payload['repository']['owner']['login']
+    repo = @payload['repository']['name']
+    puts "owner: #{owner}, repo: #{repo}"
+
+    issues_result = GitHubClient.listIssues(owner, repo)
+    if issues_result[:error] != nil
+      halt 500, { 'Content-Type' => 'application/json' }, { error: issues_result[:error] }.to_json
+    end
+
+    # get sim scores
+    # add comment for sim > threshold
     content_type :json
     status 200
-    message = '/get-similar-issues called'
-    { message: message }.to_json
+    # message = '/get-similar-issues called'
+    message = issues_result[:issues]
+    { issues: message }.to_json
   end
 
   helpers do
