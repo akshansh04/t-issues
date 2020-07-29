@@ -8,15 +8,15 @@ module GitHubClient
     @installation_client = Octokit::Client.new(bearer_token: installation_token)
   end
 
-  def self.listIssues(owner, repo, max_pages=10)
+  def self.listIssues(owner, repo, max_pages=20)
     all_issues = []
     fetched_pages = 0
-    after = nil
+    before = nil
     while fetched_pages < max_pages do
       params = {
         "owner": owner,
         "repo": repo,
-        "after": after
+        "before": before
       }
       
       issues_response = GitHubGraphQLClient::Client.query(GitHubGraphQL::ListIssuesQuery, variables: params, context: @context)
@@ -26,16 +26,21 @@ module GitHubClient
         if issues.length == 0
           break
         else
-          after = issues[issues.length-1].cursor
+          before = issues[0].cursor
           all_issues.append(*issues)
         end
         fetched_pages += 1
       else
         puts "Unexpected response from GitHub list issues API. Response: #{issues_response.inspect}"
-        return {
-          error: { message: 'Unexpected response from GitHub list issues API', response: issues_response.inspect},
-          issues: nil
-        }
+        if all_issues.length == 0
+          return {
+            error: { message: 'Unexpected response from GitHub list issues API', response: issues_response.inspect},
+            issues: nil
+          }
+        else
+          puts "Processing the obtained issues..."
+          break
+        end
       end
     end
     return {

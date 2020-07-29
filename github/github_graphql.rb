@@ -2,9 +2,9 @@ require_relative './github_graphql_client'
 
 module GitHubGraphQL
   ListIssuesQuery = GitHubGraphQLClient::Client.parse <<-'GRAPHQL'
-      query($owner: String!, $repo: String!, $after: String) {
+      query($owner: String!, $repo: String!, $before: String) {
         repository(owner:$owner, name:$repo) {
-          issues(first:100, after:$after) {
+          issues(last:100, before:$before) {
             edges {
               node {
                 title
