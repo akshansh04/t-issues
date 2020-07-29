@@ -2,7 +2,7 @@ require 'net/http'
 require_relative './config.rb'
 
 module Utilities
-  SIMILARITY_THRESHOLD = 0.60
+  SIMILARITY_THRESHOLD = 0.75
   MAX_SIMILAR_ISSUES = 10
 
   def get_similar_issues(issues)

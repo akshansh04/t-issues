@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: t-issues
-        image: ajacr5.azurecr.io/t-issues:v2
+        image: ajacr5.azurecr.io/t-issues:v3
         ports:
         - name: http
           containerPort: 80
